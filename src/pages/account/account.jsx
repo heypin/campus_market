@@ -14,8 +14,6 @@ const { Header, Content, Footer, Sider } = Layout;
 
 export default class Account extends React.Component{
 
-
-
     constructor(props){
         super(props);
         this.menuData=[
@@ -25,7 +23,8 @@ export default class Account extends React.Component{
             {key:"4", path:"/account/my-product",text:"我的闲置",icon:<Icon type="bar-chart" />},
             {key:"5", path:"/account/publish-goods",text:"发布物品",icon:<Icon type="cloud-o" />},
         ];
-        this.state={selectedKeys:["1"]}
+        this.state={selectedKeys:["1"]};
+        console.log(props);
     }
     getSelectedKey=()=> {
         const path = this.props.location.pathname;
@@ -36,7 +35,7 @@ export default class Account extends React.Component{
             }
         });
         return selectedKey;
-    }
+    };
 
     render() {
 
@@ -46,6 +45,7 @@ export default class Account extends React.Component{
         }
         return (
             <Layout>
+
                 <Sider style={{ overflow: 'auto',height:'100vh',position:'fixed',left: 0,backgroundColor:"white"}}>
                     <div>
                         <Avatar  icon="user" style={{margin:"auto",display:"block"}} size={100}/>
@@ -70,17 +70,26 @@ export default class Account extends React.Component{
                     <Header style={{ background: '#fff', padding: 0 }} />
                     <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
                         <div style={{ padding: 24, background: '#fff' }}>
-                            <Switch>
-                                <Redirect from='/account' exact to='/account/personal-center'/>
-                                <Route path='/account/my-focus' component={MyFocus}/>
-                                <Route path='/account/my-product' component={MyProduct}/>
-                                <Route path='/account/order-center' component={OrderCenter}/>
-                                <Route path='/account/personal-center' component={PersonalCenter}/>
-                                <Route path='/account/publish-goods' component={PublishGoods}/>
-                            </Switch>
+                            <UserContext.Consumer>
+                                {({user})=>{
+                                    console.log(user);
+                                    if(user===null) return null;
+                                    return(
+                                        <Switch>
+                                            <Redirect from='/account' exact to='/account/personal-center'/>
+                                            <Route path='/account/my-focus'  render={()=><MyFocus user={user}/>} />
+                                            <Route path='/account/my-product' render={()=><MyProduct user={user}/>} />
+                                            <Route path='/account/order-center' render={()=><OrderCenter user={user}/>}/>
+                                            <Route path='/account/personal-center' render={()=><PersonalCenter user={user}/>}/>
+                                            <Route path='/account/publish-goods' render={()=><PublishGoods user={user}/>}/>
+                                        </Switch>
+                                    )
+                                }}
+                            </UserContext.Consumer>
+
                         </div>
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}>©2019 Created by Ant UED</Footer>
+                    <Footer style={{ textAlign: 'center' }}>©2019 Created by heypin</Footer>
                 </Layout>
             </Layout>
         )

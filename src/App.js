@@ -11,19 +11,17 @@ import {message} from "antd";
 import Constant from "./utils/constant";
 export  const UserContext = React.createContext({
     changeLoginState:()=>{},
-    user:{needLogin:true},
-    admin:{needLogin: true},
+    user:null,
+    admin:null,
 })
 export default class App extends Component {
 
     constructor(props){
         super(props);
-        let user_token=window.localStorage.getItem("user_token");
-        let admin_token=window.localStorage.getItem("admin_token");
         this.state={
             changeLoginState:this.changeLoginState,
-            user:{needLogin:!user_token}, //登录后user为一个新的对象，无needLogin属性，所以needLogin==undefined,即false,不需要登录
-            admin:{needLogin:!admin_token},
+            user:null,
+            admin:null,
         };
     }
     changeLoginState=(option)=>{
@@ -39,7 +37,6 @@ export default class App extends Component {
             }catch (e) {
                 message.error("请重新登录后操作!");
                 window.localStorage.removeItem("user_token");//可能为失效，所以移除
-                this.changeLoginState({user:{needLogin:true}});
             }
         }
         if(admin_token){
@@ -49,10 +46,9 @@ export default class App extends Component {
             }catch (e) {
                 message.error("请重新登录后操作!");
                 window.localStorage.removeItem("admin_token");
-                this.changeLoginState({user:{needLogin:true}});
             }
         }
-    }
+    };
 
     render(){
         return (
@@ -61,8 +57,8 @@ export default class App extends Component {
                     <Switch>
                         <Redirect from='/' exact to='/home'/>
                         <Route path='/home' component={Home}/>
-                        <Route path='/account' component={this.state.user.needLogin?NotAuthorized:Account}/>
-                        <Route path='/admin' component={this.state.admin.needLogin?NotAuthorized:Admin}/>
+                        <Route path='/account' component={this.state.user===null?NotAuthorized:Account}/>
+                        <Route path='/admin'  component={this.state.admin===null?NotAuthorized:Admin}/>
                         <Route path='/goods/:id' component={Goods}/>
                         <Route path='/401' component={NotAuthorized}/>
                         <Route component={NotFound}/>

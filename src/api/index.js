@@ -53,5 +53,9 @@ export default {
         ajax(`/user/refresh`,{token:token}),
     getAdminByToken:(token)=>
         ajax(`/admin/refresh`,{token:token}),
+    addComment:(comment)=>
+        ajax(`/user/addComment`,comment,'POST'),
+    hasWatchGoods:(userId,goodsId)=>
+        ajax(`/watch/hasWatch`,{userId:userId,goodsId:goodsId}),
 
 }

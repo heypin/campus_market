@@ -42,7 +42,7 @@ export  default  class Home extends React.Component{
     };
 
     handleLogout = (changeLoginState) => {
-        changeLoginState({user: {needLogin:true}});
+        changeLoginState({user: null});
         window.localStorage.removeItem("user_token");
 
     };
@@ -72,7 +72,7 @@ export  default  class Home extends React.Component{
                             <UserContext.Consumer>
                                 {
                                     ({user, changeLoginState}) => {
-                                        if (user.needLogin) {
+                                        if (user===null) {
                                             return (
                                                 <div className="right">
                                                     <LoginForm className="login" changeLoginState={changeLoginState}/>
@@ -115,8 +115,9 @@ export  default  class Home extends React.Component{
                             </Content>
                         </Layout>
                     </Layout>
+
                 </Layout>
-                <div className='footer'>
+                <div className='home-footer'>
                     <div >Copyright &copy;2019 heyongpin</div>
                 </div>
             </div>

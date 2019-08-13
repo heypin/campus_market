@@ -1,6 +1,6 @@
 import React from 'react'
 import './myFocus.less'
-import {Button, List,Divider} from "antd";
+import {Button, List,Divider,message} from "antd";
 import Request from '../../api'
 import Constant from '../../utils/constant'
 
@@ -10,13 +10,21 @@ export default class MyFocus extends React.Component{
         this.state={goodsData:[]};
     }
     loadGoodsData=async ()=>{
-        const result=await Request.getWatchList(25);
+        const result=await Request.getWatchList(this.props.user.userId);
         this.setState({goodsData:result})
-    }
+    };
     componentDidMount() {
         this.loadGoodsData();
     }
-
+    handleUnWatch=async (goodsId)=>{
+        try{
+            await Request.unwatch(this.props.user.userId,goodsId);
+            message.info("取消成功!");
+        }catch (e) {
+            message.info("取消失败!");
+        }
+        this.loadGoodsData();
+    };
     render() {
         return (
             <List itemLayout="horizontal" size="large" dataSource={this.state.goodsData} className="my-focus"
@@ -30,9 +38,9 @@ export default class MyFocus extends React.Component{
                               <span>{item.goodsPrice}</span>
                               <span>{item.goodsDescribe}</span>
                               <div className="action">
-                                  <Button type="link">取消关注</Button>
+                                  <Button type="link" onClick={()=>{this.handleUnWatch(item.goodsId)}}>取消关注</Button>
                                   <Divider type="vertical"/>
-                                  <Button type="link">商品详情</Button>
+                                  <Button type="link" onClick={()=>this.props.history.push(`/goods/${item.goodsId}`)}>商品详情</Button>
                               </div>
                           </div>
                       </List.Item>
