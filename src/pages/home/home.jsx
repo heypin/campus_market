@@ -27,7 +27,7 @@ export  default  class Home extends React.Component{
     onPageChange=async (pageNumber)=> {
         let key=this.selectedMenuKey;
         const result = await Request.getLatestGoods(key,pageNumber,20);
-        console.log(result);
+
         this.goodsMenu[key]=result;
         this.setState({goods:result});
     };

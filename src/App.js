@@ -14,6 +14,7 @@ export  const UserContext = React.createContext({
     user:null,
     admin:null,
 })
+export let random=Math.floor(Math.random()*10);
 export default class App extends Component {
 
     constructor(props){
@@ -28,6 +29,7 @@ export default class App extends Component {
         this.setState(option);
     };
      componentDidMount=async ()=> {
+         console.log("app did mount")
         let user_token=window.localStorage.getItem("user_token");
         let admin_token=window.localStorage.getItem("admin_token");
         if(user_token){
@@ -37,6 +39,7 @@ export default class App extends Component {
             }catch (e) {
                 message.error("请重新登录后操作!");
                 window.localStorage.removeItem("user_token");//可能为失效，所以移除
+                this.changeLoginState({user:null});
             }
         }
         if(admin_token){
@@ -46,6 +49,7 @@ export default class App extends Component {
             }catch (e) {
                 message.error("请重新登录后操作!");
                 window.localStorage.removeItem("admin_token");
+                this.changeLoginState({admin:null});
             }
         }
     };
@@ -57,8 +61,14 @@ export default class App extends Component {
                     <Switch>
                         <Redirect from='/' exact to='/home'/>
                         <Route path='/home' component={Home}/>
-                        <Route path='/account' component={this.state.user===null?NotAuthorized:Account}/>
-                        <Route path='/admin'  component={this.state.admin===null?NotAuthorized:Admin}/>
+                        <Route path='/account'  render={(props)=>{
+                            if(this.state.user===null)return(<NotAuthorized/>);
+                            return <Account user={this.state.user} {...props}/>
+                        }}/>
+                        <Route path='/admin'   render={(props)=>{
+                            if(this.state.admin===null)return(<NotAuthorized/>);
+                            return <Admin user={this.state.admin} {...props}/>
+                        }}/>
                         <Route path='/goods/:id' component={Goods}/>
                         <Route path='/401' component={NotAuthorized}/>
                         <Route component={NotFound}/>

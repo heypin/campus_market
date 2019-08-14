@@ -14,35 +14,15 @@ export default {
     getSoldOrderByUserId:(userId)=>
         ajax(`/orders/sold`,{userId:userId}),
     addWatch:(userId,goodsId)=>
-        ajax(`/watch/add`,{userId:userId,goodsId:goodsId}),
+        ajax(`/watch/add`,{userId:userId,goodsId:goodsId},'POST'),
     unwatch:(userId,goodsId)=>
-        ajax(`/watch/cancel`,{userId:userId,goodsId:goodsId}),
+        ajax(`/watch/cancel`,{userId:userId,goodsId:goodsId},'PUT'),
     getAllCategory:()=>
         ajax(`/category/all`),
     getMyProductByUserId:(userId)=>
         ajax(`/user/my-product`,{userId:userId}),
     getWatchList:(userId)=>
         ajax(`/user/watch-list`,{userId:userId}),
-    getOrderListByPage:(pageNum,pageSize)=>
-        ajax(`/admin/order`,{pg:pageNum,sz:pageSize}),
-    updateOrderById:(order)=>
-        ajax(`/admin/order`,order,'POST'),
-
-    getPurseListByPage:(pageNum,pageSize)=>
-        ajax(`/admin/purse`,{pg:pageNum,sz:pageSize}),
-    updatePurseById:(purse)=>
-        ajax(`/admin/purse`,purse,'POST'),
-
-    getGoodsListByPage:(pageNum,pageSize)=>
-        ajax(`/admin/goods`,{pg:pageNum,sz:pageSize}),
-    updateGoodsById:(goods)=>
-        ajax(`/admin/goods`,goods,'POST'),
-
-    getUserListByPage:(pageNum,pageSize)=>
-        ajax(`/admin/user`,{pg:pageNum,sz:pageSize}),
-    updateUserById:(user)=>
-        ajax(`/admin/user`,user,'POST'),
-
     userLogin:(user)=>
         ajax(`/user/login`,user,'POST'),
     userRegister:(user)=>
@@ -57,5 +37,38 @@ export default {
         ajax(`/user/addComment`,comment,'POST'),
     hasWatchGoods:(userId,goodsId)=>
         ajax(`/watch/hasWatch`,{userId:userId,goodsId:goodsId}),
+    deliverGoods:(orderId)=>
+        ajax(`/orders/deliver`,{orderId:orderId},'PUT'),
+    confirmReceipt:(orderId)=>
+        ajax(`/orders/receipt`,{orderId:orderId},'PUT'),
+    getPurseByUserId:(userId)=>
+        ajax(`/purse`,{userId:userId}),
+    getReplyToMeComment:(userId)=>
+        ajax(`/user/replied-comment`,{userId:userId}),
+    readComment:(userId,commentId)=>
+        ajax(`/user/read-comment`,{replyUserId:userId,commentId:commentId},'PUT'),
+    updateGoodsState:(userId,goodsId,goodsState)=>
+        ajax(`/user/goodsState`,{userId:userId,goodsId:goodsId,goodsState:goodsState},'PUT'),
 
+
+    getOrderListByPage:(pageNum,pageSize)=>
+        ajax(`/admin/order`,{pg:pageNum,sz:pageSize}),
+    updateOrderById:(order)=>
+        ajax(`/admin/order`,order,'PUT'),
+    searchOrderByPage:(value,pageNum,pageSize)=>
+        ajax(`/admin/order/search`,{value:value,pg:pageNum,sz:pageSize}),
+    getPurseListByPage:(pageNum,pageSize)=>
+        ajax(`/admin/purse`,{pg:pageNum,sz:pageSize}),
+    updatePurseById:(purse)=>
+        ajax(`/admin/purse`,purse,'PUT'),
+
+    getGoodsListByPage:(pageNum,pageSize)=>
+        ajax(`/admin/goods`,{pg:pageNum,sz:pageSize}),
+    updateGoodsById:(goods)=>
+        ajax(`/admin/goods`,goods,'PUT'),
+
+    getUserListByPage:(pageNum,pageSize)=>
+        ajax(`/admin/user`,{pg:pageNum,sz:pageSize}),
+    updateUserById:(user)=>
+        ajax(`/admin/user`,user,'PUT'),
 }

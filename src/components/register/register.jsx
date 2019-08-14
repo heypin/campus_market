@@ -29,7 +29,7 @@ class RegistrationForm extends React.Component {
     };
 
     handleCancel = () => {
-        console.log('Clicked cancel button');
+
         this.setState({
             visible: false,
         });
@@ -39,7 +39,7 @@ class RegistrationForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+
             }
         });
     };

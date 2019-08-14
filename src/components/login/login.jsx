@@ -36,8 +36,8 @@ class NormalLoginForm extends React.Component {
             window.localStorage.setItem("admin_token",result.token);
             this.setState({visible: false, confirmLoading: false,});
             message.success("登录成功!");
-            this.props.history.push("/admin");
             this.props.changeLoginState({admin:result.admin});
+            this.props.history.push("/admin");
 
         }catch (e) {
             this.setState({confirmLoading: false,});

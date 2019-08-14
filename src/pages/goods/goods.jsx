@@ -34,13 +34,29 @@ export default class Goods extends React.Component{
         this.mentionCount++;
     };
     addFocus=async ()=>{
-        if(this.state.hasFocus){
-          const  result=await Request.addWatch(this.user.userId,this.goodsId)
+        if(!this.state.hasFocus){
+          const  result=await Request.addWatch(this.user.userId,this.goodsId);
+          message.success("关注成功");
+          this.setState({hasFocus:true});
+        }else {
+            const result=await Request.unwatch(this.user.userId,this.goodsId);
+            message.info("取消成功");
+            this.setState({hasFocus:false});
         }
     };
     buyNow= ()=>{
 
     };
+    queryFocus = async () => {
+        if(this.user===null||this.hasQueryFocus!==undefined) return ;//只在获取到user后查一次是否关注
+        const result = await Request.hasWatchGoods(this.user.userId, this.goodsId);
+        this.hasQueryFocus = true;
+        this.setState({hasFocus: result.hasWatch});
+    };
+    componentDidUpdate() {
+        this.queryFocus();
+    }
+
     handleSubmitComment=async ()=>{
         if(this.mentionCount>1){
             message.info("只能回复一个人");
@@ -82,18 +98,10 @@ export default class Goods extends React.Component{
         const result = await Request.getCommentsByGoodsId(this.goodsId);
         this.setState({comments:result})
     };
-    queryHasFocus= ()=>{
-        setTimeout(async ()=>{
-            if(this.user===null) return ;
-            const result=await Request.hasWatchGoods(this.user.userId,this.goodsId);
-            this.setState({hasFocus:result.hasWatch});
-        },500);
 
-    };
     componentDidMount(){
         this.loadGoodsData();
         this.loadCommentsData();
-        this.queryHasFocus();
     }
 
     handleNeedLogin=()=>{
@@ -102,8 +110,6 @@ export default class Goods extends React.Component{
 
     render() {
         const goodsDetail=this.state.goodsDetail;
-
-
         return(
             <div className="goods">
 
@@ -150,8 +156,11 @@ export default class Goods extends React.Component{
                                                     }
                                                     </Button>
                                                     <Button type="primary" className="buy"
-                                                            onClick={user===null?this.handleNeedLogin: this.buyNow}
-                                                    >立即购买
+                                                            onClick={goodsDetail.goodsState===1?
+                                                                user===null?this.handleNeedLogin: this.buyNow:
+                                                                null
+                                                            }
+                                                    >{goodsDetail.goodsState===1?"立即购买":"已下架"}
                                                     </Button>
                                                 </div>
                                             )

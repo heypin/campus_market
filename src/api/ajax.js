@@ -42,7 +42,7 @@ axios.interceptors.response.use(function (response) {
 export default function ajax(url, data = {}, type = 'GET') {
 
     return new Promise((resolve, reject) => {
-        let promise
+        let promise;
         if (type === 'GET') {
             promise = axios.get(url, {params: data});
         } else if (type === 'POST') {
@@ -56,7 +56,6 @@ export default function ajax(url, data = {}, type = 'GET') {
             resolve(response.data);
         }).catch(error => {
             reject(error);
-          //  message.error(`请求出错: ` + error.message);
         })
     })
 

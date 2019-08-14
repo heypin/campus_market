@@ -6,7 +6,6 @@ import OrderManage from '../admin-order/orderManage';
 import GoodsManage from '../admin-goods/goodsManage';
 import UserManage from '../admin-user/userManage';
 
-
 const { Header, Content, Footer, Sider } = Layout;
 export default class Admin extends React.Component{
     constructor(props){
@@ -29,7 +28,7 @@ export default class Admin extends React.Component{
             }
         });
         return selectedKey;
-    }
+    };
 
     render() {
         let selectedKey = this.getSelectedKey();
