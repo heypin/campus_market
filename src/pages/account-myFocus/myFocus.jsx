@@ -31,7 +31,7 @@ export default class MyFocus extends React.Component{
                   renderItem={item => (
                       <List.Item key={item.goodsId}>
                           <div className="cover">
-                              <img  alt="cover" src={Constant.BaseImgUrl+item.image.imgUrl} />
+                              <img  alt="cover" src={Constant.BaseImgUrl+item.goodsImg} />
                           </div>
                           <div className="goods-info">
                               <span>{item.goodsName}</span>

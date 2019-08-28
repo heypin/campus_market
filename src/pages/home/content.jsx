@@ -14,14 +14,14 @@ export default class MainContent extends React.Component{
                    <Col span={6}  style={{marginTop:20}} >
                        <Card
                            hoverable
-                           cover={<img alt="cover"  src={Constant.BaseImgUrl+ item.imagesList[0].imgUrl}
+                           cover={<img alt="cover"  src={Constant.BaseImgUrl+ item.goodsImg}
                                         style={{width:180,height:180,marginLeft:"auto",marginRight:"auto"}}/>}
                            style={{width:180,height:260}}
                            bodyStyle={{paddingLeft:5,paddingRight:5}}
                        >
                            <Meta title={<div style={{overflow:"hidden",textOverflow:"ellipsis",fontSize:14}}>{item.goodsName}</div>}
                                  description={<span>{item.goodsPrice}</span>}
-                                 avatar={<Avatar src={Constant.BaseAvatar+item.userAvatarUrl}/> }
+                                 avatar={<Avatar src={Constant.BaseAvatar+item.user.userAvatarUrl}/> }
                            />
 
                        </Card>

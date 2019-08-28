@@ -40,5 +40,6 @@
       "last 1 safari version"
     ]
   },
+  "homepage": "/market",
   "proxy": "http://localhost:8080"
 }

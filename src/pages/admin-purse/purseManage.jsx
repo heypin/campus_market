@@ -1,11 +1,8 @@
 import React from 'react'
 import {Button, Card, Form, Input, message, Pagination, Popconfirm, Table} from "antd";
-import {Link} from "react-router-dom";
 import {Resizable} from "react-resizable";
 import Request from '../../api';
-import {random} from "../../App";
 
-const {Search}=Input;
 const EditableContext = React.createContext();
 const ResizeableTitle = props => {
     const { onResize, width, ...restProps } = props;
@@ -123,7 +120,6 @@ class PurseManage extends  React.Component{
     };
     componentDidMount() {
         this.loadPurseDataByPage(1);
-        console.log(random);
 
     };
 

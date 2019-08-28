@@ -23,7 +23,7 @@ export default class Admin extends React.Component{
         const path = this.props.location.pathname;
         let selectedKey=[];
         this.menuData.forEach((item)=>{
-            if(item.path==path){
+            if(item.path===path){
                 selectedKey=[item.key];
             }
         });

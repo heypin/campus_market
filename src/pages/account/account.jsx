@@ -74,7 +74,8 @@ export default class Account extends React.Component{
                         <div style={{padding: 24, background: '#fff'}}>
                             <Switch>
                                 <Redirect from='/account' exact to='/account/personal-center'/>
-                                <Route path='/account/my-focus' render={(props) => <MyFocus user={this.props.user} {...props} />}/>
+                                <Route path='/account/my-focus'
+                                       render={(props) => <MyFocus user={this.props.user} {...props} />}/>
                                 <Route path='/account/my-product'
                                        render={(props) => <MyProduct user={this.props.user} {...props}/>}/>
                                 <Route path='/account/order-center'

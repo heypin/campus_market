@@ -10,7 +10,7 @@ export default class MyProduct extends React.Component{
         this.state={goodsData:[]};
     }
     loadGoodsData=async ()=>{
-        const result=await Request.getMyProductByUserId(25);
+        const result=await Request.getMyProductByUserId(this.props.user.userId);
         this.setState({goodsData:result})
     };
     componentDidMount() {
@@ -33,7 +33,7 @@ export default class MyProduct extends React.Component{
                   renderItem={item => (
                       <List.Item key={item.goodsId}>
                           <div className="cover">
-                              <img  alt="cover" src={Constant.BaseImgUrl+item.image.imgUrl} />
+                              <img  alt="cover" src={Constant.BaseImgUrl+item.goodsImg} />
                           </div>
                           <div className="goods-info">
                               <span>{item.goodsName}</span>

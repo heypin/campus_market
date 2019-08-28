@@ -15,9 +15,8 @@ export default class Goods extends React.Component{
         this.mentions=[];
         this.mentionCount=0;
         this.state = {
-            goodsDetail: {
-                imagesList:[]
-            },
+            goodsDetail: {user:{}},
+            goodsImages:[],
             mainImageUrl:"",
             comments:[],
             hasFocus:false,
@@ -35,17 +34,17 @@ export default class Goods extends React.Component{
     };
     addFocus=async ()=>{
         if(!this.state.hasFocus){
-          const  result=await Request.addWatch(this.user.userId,this.goodsId);
+          await Request.addWatch(this.user.userId,this.goodsId);
           message.success("关注成功");
           this.setState({hasFocus:true});
         }else {
-            const result=await Request.unwatch(this.user.userId,this.goodsId);
+            await Request.unwatch(this.user.userId,this.goodsId);
             message.info("取消成功");
             this.setState({hasFocus:false});
         }
     };
     buyNow= ()=>{
-
+        this.props.history.push({pathname:"/pay",goodsDetail:this.state.goodsDetail});
     };
     queryFocus = async () => {
         if(this.user===null||this.hasQueryFocus!==undefined) return ;//只在获取到user后查一次是否关注
@@ -67,7 +66,7 @@ export default class Goods extends React.Component{
         }
         let replyUserId=this.mentions.length===1?this.mentions[0].userId:undefined;
         try{
-            const result=await Request.addComment({
+                await Request.addComment({
                 userId:this.user.userId,
                 goodsId:this.goodsId,
                 replyUserId:replyUserId,
@@ -84,11 +83,7 @@ export default class Goods extends React.Component{
         try {
             const result = await Request.getGoodsDetail(this.goodsId);
             this.setState((state)=>{
-                let mainImageUrl="";
-                if(result.imagesList.length>0){
-                    mainImageUrl=result.imagesList[0].imgUrl
-                }
-                return {goodsDetail:result,mainImageUrl:mainImageUrl};
+                return {goodsDetail:result,mainImageUrl: result.goodsImg};
             })
         } catch (e) {
             this.props.history.replace("/404");
@@ -98,10 +93,15 @@ export default class Goods extends React.Component{
         const result = await Request.getCommentsByGoodsId(this.goodsId);
         this.setState({comments:result})
     };
+    loadGoodsImages=async ()=>{
+        const result = await Request.getImagesByGoodsId(this.goodsId);
+        this.setState({goodsImages:result});
+    };
 
     componentDidMount(){
         this.loadGoodsData();
         this.loadCommentsData();
+        this.loadGoodsImages();
     }
 
     handleNeedLogin=()=>{
@@ -124,8 +124,8 @@ export default class Goods extends React.Component{
                             <div className="goods-info">
                                 <p className="title">{goodsDetail.goodsName}</p>
                                 <div className="username">
-                                    <img alt="avatar" src={goodsDetail.userAvatarUrl?Constant.BaseAvatar+goodsDetail.userAvatarUrl:""}/>
-                                    <span>{goodsDetail.username}</span>
+                                    <img alt="avatar" src={goodsDetail.user.userAvatarUrl?Constant.BaseAvatar+goodsDetail.user.userAvatarUrl:""}/>
+                                    <span>{goodsDetail.user.username}</span>
                                 </div>
                                 <div className="goods-price">
                                     <i className="iconfont icon-Price-Tag"/>
@@ -170,15 +170,21 @@ export default class Goods extends React.Component{
 
                                 <div className="img-list">
                                     <p>所有图片</p>
-                                    <ul >
+                                    <ul>
+                                        <li  style={{cursor: "pointer"}}>
+                                            <img src={Constant.BaseImgUrl + goodsDetail.goodsImg}
+                                                 onClick={() => {
+                                                     this.setState({mainImageUrl: goodsDetail.goodsImg})
+                                                 }} alt="商品图片"/>
+                                        </li>
                                         {
-                                            goodsDetail.imagesList.map((item,index)=>{
+                                            this.state.goodsImages.map((item, index) => {
                                                 return (
-                                                    <li key={index} style={{cursor:"pointer"}}>
-                                                        <img src={Constant.BaseImgUrl+item.imgUrl}
-                                                             onClick={()=>{
-                                                                  this.setState({mainImageUrl:item.imgUrl})
-                                                             }}/>
+                                                    <li key={index} style={{cursor: "pointer"}}>
+                                                        <img src={Constant.BaseImgUrl + item.imgUrl}
+                                                             onClick={() => {
+                                                                 this.setState({mainImageUrl: item.imgUrl})
+                                                             }} alt="商品图片"/>
                                                     </li>
                                                 )
                                             })

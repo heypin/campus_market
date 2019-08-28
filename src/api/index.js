@@ -7,6 +7,8 @@ export default {
         ajax(`/goods/search`,{search:search,pg: pageNum,sz:pageSize}),
     getGoodsDetail:(id)=>
         ajax(`/goods/${id}`),
+    getImagesByGoodsId:(id)=>
+        ajax(`/goods/image`,{id:id}),
     getCommentsByGoodsId:(id)=>
         ajax(`/comments/goodsId/${id}`),
     getPurchaseOrderByUserId:(userId)=>
@@ -25,8 +27,12 @@ export default {
         ajax(`/user/watch-list`,{userId:userId}),
     userLogin:(user)=>
         ajax(`/user/login`,user,'POST'),
+    rechargeOrWithdraw:(purse)=>
+        ajax(`/purse`,purse,'PUT'),
     userRegister:(user)=>
         ajax(`/user/register`,user,'POST'),
+    editUserInfo:(user)=>
+        ajax(`/user`,user,'PUT'),
     adminLogin:(admin)=>
         ajax(`/admin/login`,admin,'POST'),
     getUserByToken:(token)=>

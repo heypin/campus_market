@@ -22,8 +22,6 @@ class NormalLoginForm extends React.Component {
             message.success("登录成功!");
 
             this.props.changeLoginState({user:result.user});//这句一定要放在this.setState之后
-
-
         }catch (e) {
             this.setState({confirmLoading: false,});
             message.error("用户名或密码错误！");
@@ -72,14 +70,14 @@ class NormalLoginForm extends React.Component {
                 <Button type="primary" size="large" onClick={this.showModal}>
                     登录
                 </Button>
-                <Modal title="登录" visible={visible} onOk={this.handleOk}
+                <Modal title="登录" visible={visible}
                        confirmLoading={confirmLoading}
                        onCancel={this.handleCancel} footer={null}
                 >
                     <Form {...formItemLayout} onSubmit={this.handleSubmit} className="login-form">
                         <Form.Item className="username">
                             {getFieldDecorator('telephone', {
-                                rules: [{ required: true, message: '请输入手机号!' }],
+                                rules: [{ required: true, message: '请输入手机号!' },{len:11,message:'请输入11位手机号'},],
                             })(
                                 <Input
                                     prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
@@ -89,7 +87,7 @@ class NormalLoginForm extends React.Component {
                         </Form.Item >
                         <Form.Item className="password">
                             {getFieldDecorator('password', {
-                                rules: [{ required: true, message: '请输入密码!' }],
+                                rules: [{ required: true, message: '请输入密码!' },{min:6,message:'请输入至少6位密码'},],
                             })(
                                 <Input
                                     prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}

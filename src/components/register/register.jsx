@@ -1,45 +1,35 @@
-import {Form, Input, Modal, Row, Col, Button,} from 'antd';
+import {Form, Input, Modal, Button, message,} from 'antd';
 import React from 'react';
 import './register.less'
-
+import Request from '../../api'
 class RegistrationForm extends React.Component {
     state = {
         confirmDirty: false,
-        autoCompleteResult: [],
-        ModalText: 'Content of the modal',
         visible: false,
         confirmLoading: false,
     };
     showModal = () => {
-        this.setState({
-            visible: true,
-        });
+        this.setState({visible: true,});
     };
-    handleOk = () => {
-        this.setState({
-            ModalText: 'The modal will be closed after two seconds',
-            confirmLoading: true,
-        });
-        setTimeout(() => {
-            this.setState({
-                visible: false,
-                confirmLoading: false,
-            });
-        }, 2000);
-    };
-
     handleCancel = () => {
-
-        this.setState({
-            visible: false,
-        });
+        this.setState({visible: false,});
     };
-
+    userRegister=async (user)=>{
+        try{
+            this.setState({confirmLoading: true,});
+            await Request.userRegister(user);
+            this.setState({visible: false, confirmLoading: false,});
+            message.success("注册成功!");
+        }catch (e) {
+            this.setState({confirmLoading: false,});
+            message.error("手机号已被注册！");
+        }
+    };
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-
+                this.userRegister(values);
             }
         });
     };
@@ -52,7 +42,7 @@ class RegistrationForm extends React.Component {
     compareToFirstPassword = (rule, value, callback) => {
         const { form } = this.props;
         if (value && value !== form.getFieldValue('password')) {
-            callback('Two passwords that you enter is inconsistent!');
+            callback('两次密码不一致!');
         } else {
             callback();
         }
@@ -70,8 +60,7 @@ class RegistrationForm extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { autoCompleteResult } = this.state;
-        const { visible, confirmLoading, ModalText } = this.state;
+        const { visible, confirmLoading } = this.state;
 
         const formItemLayout = {
             labelCol: {
@@ -102,41 +91,24 @@ class RegistrationForm extends React.Component {
                 <Button type="primary" size="large" onClick={this.showModal}>
                     注册
                 </Button>
-                <Modal
-                    title="用户注册"
-                    visible={visible}
-                    onOk={this.handleOk}
-                    confirmLoading={confirmLoading}
-                    onCancel={this.handleCancel}
-                    footer = {null}
+                <Modal title="用户注册" visible={visible} confirmLoading={confirmLoading}
+                       onCancel={this.handleCancel} footer = {null}
                 >
-
-
                     <Form {...formItemLayout} onSubmit={this.handleSubmit} className="registerForm">
                         <Form.Item label="手机号">
-                            {getFieldDecorator('email', {
+                            {getFieldDecorator('telephone', {
                                 rules: [
-                                    {
-                                        type: 'email',
-                                        message: 'The input is not valid E-mail!',
-                                    },
-                                    {
-                                        required: true,
-                                        message: 'Please input your E-mail!',
-                                    },
+                                    {required: true, message: '请输入手机号!',},
+                                    {len:11,message:'请输入11位手机号'},
                                 ],
                             })(<Input />)}
                         </Form.Item>
                         <Form.Item label="密码" hasFeedback>
                             {getFieldDecorator('password', {
                                 rules: [
-                                    {
-                                        required: true,
-                                        message: '请输入密码',
-                                    },
-                                    {
-                                        validator: this.validateToNextPassword,
-                                    },
+                                    {required: true, message: '请输入密码',},
+                                    {min:6,message:'请输入至少6位密码'},
+                                    {validator: this.validateToNextPassword,},
                                 ],
                             })(<Input.Password />)}
                         </Form.Item>
@@ -144,33 +116,23 @@ class RegistrationForm extends React.Component {
                         <Form.Item label="重复密码" hasFeedback>
                             {getFieldDecorator('confirm', {
                                 rules: [
-                                    {
-                                        required: true,
-                                        message: '请重复密码',
-                                    },
-                                    {
-                                        validator: this.compareToFirstPassword,
-                                    },
+                                    {required: true, message: '请重复密码',},
+                                    {min:6,message:'请输入至少6位密码'},
+                                    {validator: this.compareToFirstPassword,},
                                 ],
                             })(<Input.Password onBlur={this.handleConfirmBlur} />)}
                         </Form.Item>
 
-
-
-                        <Form.Item label="验证码">
-                            <Row gutter={8}>
-                                <Col span={12}>
-                                    {getFieldDecorator('captcha', {
-                                        rules: [{ required: true, message: '请输入验证码' }],
-                                    })(<Input />)}
-                                </Col>
-                                <Col span={12}>
-                                    <Button>获取验证码</Button>
-                                </Col>
-                            </Row>
-                        </Form.Item>
-
-
+                        {/*<Form.Item label="验证码">*/}
+                        {/*    <Row gutter={8}>*/}
+                        {/*        <Col span={12}>*/}
+                        {/*            {getFieldDecorator('captcha', {rules: [{ required: true, message: '请输入验证码' }],})(<Input />)}*/}
+                        {/*        </Col>*/}
+                        {/*        <Col span={12}>*/}
+                        {/*            <Button>获取验证码</Button>*/}
+                        {/*        </Col>*/}
+                        {/*    </Row>*/}
+                        {/*</Form.Item>*/}
 
                         <Form.Item {...tailFormItemLayout}>
                             <Button type="primary" htmlType="submit" className="registerBtn">
