@@ -37,7 +37,10 @@ export default {
         ajax(`/user/publish-goods`,goods,'POST'),
     addPicture:(images)=>
         ajax(`/user/add-picture`,images,'POST'),
-
+    getPublishedGoodsImg:(goodsId)=>
+        ajax(`/user/published-goods-img`,{goodsId:goodsId}),
+    modifyGoodsById:(goods)=>
+        ajax(`/user/modify-goods`,goods,'PUT'),
     adminLogin:(admin)=>
         ajax(`/admin/login`,admin,'POST'),
     getUserByToken:(token)=>

@@ -10,21 +10,87 @@ class PublishGoods extends React.Component{
         this.state = {
             previewVisible: false,
             previewImage: '',
-            fileList: [
-                {
-                    uid: '-1',
-                    url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-                    response:{url:""}
-                },
-            ],
+            fileList: [],
+            isModifyState:false,
         };
-
-
     }
+    setInitValueWhenUpdate=()=> {
+        const goods=this.props.location.state;
+        if(goods!==undefined){
+            this.props.form.setFieldsValue({
+                goodsName:goods.goodsName,
+                goodsPrice:goods.goodsPrice,
+                goodsRealPrice:goods.goodsRealPrice,
+                goodsDescribe:goods.goodsDescribe
+            });
+            this.setState({
+                isModifyState:true,
+                fileList:[{
+                    uid:"-1",
+                    url:Constant.BaseImgUrl+goods.goodsImg,
+                    response:{url:goods.goodsImg}}
+                ]});
+        }
+
+    };
+
+    loadGoodsImages=async ()=> {
+        const goods=this.props.location.state;
+        if(goods!==undefined){
+            const images = await Request.getImagesByGoodsId(goods.goodsId);
+            let files=[];
+            images.forEach((item,index)=>{
+                files.push({
+                    uid:(-index-2).toString(),
+                    url:Constant.BaseImgUrl+item.imgUrl,
+                    response: {url:item.imgUrl}
+                })
+            });
+            this.setState((state)=>{
+                return {
+                    fileList:state.fileList.concat(files)
+                }
+            })
+        }
+
+    };
+    componentDidMount() {
+        this.setInitValueWhenUpdate();
+        this.loadGoodsImages();
+    }
+
+    handleModifyGoods=async ()=>{
+        const {fileList} = this.state;
+        this.props.form.validateFields(async (err, values) => {
+            if (!err) {
+                try {
+                    if(fileList.length>=1){
+                        values.goodsImg=fileList[0].response.url;
+                    }
+                    values.goodsId=this.props.location.state.goodsId;
+                    await Request.modifyGoodsById(values);
+                    message.success("商品修改成功!");
+                    if(fileList.length>=2){
+                        let images=[];
+                        for(let i=1;i<fileList.length;i++){
+                            images.push({goodsId:values.goodsId,imgUrl:fileList[i].response.url});
+                        }
+                        try {
+                            await Request.addPicture(images);
+                            message.success("图片修改成功!");
+                        }catch (e) {
+                            message.error("图片修改失败");
+                        }
+                    }
+                } catch (e) {
+                    message.error("商品修改失败");
+                }
+            }
+        });
+    };
     handleChange = (e) =>{
         const {fileList}=e;
-        console.log(e);
-        this.setState({ fileList })
+        this.setState({ fileList });
         console.log(fileList);
     };
     handleSubmit=(e)=>{
@@ -89,7 +155,7 @@ class PublishGoods extends React.Component{
         );
         return (
             <Form labelCol={{span:3,offset:0}}  wrapperCol={{span:8}}  onSubmit={this.handleSubmit} className="login-form">
-                <Form.Item label="商品图片" wrapperCol={{span: 12}}>
+                <Form.Item label="商品图片" wrapperCol={{span: 20}}>
                     <Upload
                         action={Constant.UploadImage}
                         listType="picture-card"
@@ -139,7 +205,7 @@ class PublishGoods extends React.Component{
                         />
                     )}
                 </Form.Item>
-                <Form.Item label="描述">
+                <Form.Item label="描述" wrapperCol={{span:16}}>
                     {getFieldDecorator('goodsDescribe', {
                         rules: [{ required: true, message: '请输入密码!' }],
                     })(
@@ -147,9 +213,18 @@ class PublishGoods extends React.Component{
                     )}
                 </Form.Item>
                 <Form.Item wrapperCol={{span:3,offset:3}}>
-                    <Button type="primary" htmlType="submit" >
-                        发布
-                    </Button>
+                    {
+                        this.state.isModifyState ? (
+                            <Button type="primary" onClick={this.handleModifyGoods}>
+                                确认修改
+                            </Button>
+                        ) : (
+                            <Button type="primary" htmlType="submit">
+                                发布
+                            </Button>
+                        )
+                    }
+
                 </Form.Item>
             </Form>
         )
