@@ -33,6 +33,11 @@ export default {
         ajax(`/user/register`,user,'POST'),
     editUserInfo:(user)=>
         ajax(`/user`,user,'PUT'),
+    publishGoods:(goods)=>
+        ajax(`/user/publish-goods`,goods,'POST'),
+    addPicture:(images)=>
+        ajax(`/user/add-picture`,images,'POST'),
+
     adminLogin:(admin)=>
         ajax(`/admin/login`,admin,'POST'),
     getUserByToken:(token)=>

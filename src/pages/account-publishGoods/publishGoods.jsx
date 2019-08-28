@@ -28,23 +28,30 @@ class PublishGoods extends React.Component{
         console.log(fileList);
     };
     handleSubmit=(e)=>{
-        const {fileList}=this.state;
         e.preventDefault();
+        const {fileList}=this.state;
         this.props.form.validateFields(async (err, values) => {
             if (!err) {
                 try {
                     if(fileList.length>=1){
                         values.goodsImg=fileList[0].response.url;
                     }
+                    const goods=await Request.publishGoods(values);
+                    message.success("商品发布成功!");
                     if(fileList.length>=2){
-                        values.images=[];
-                        fileList.forEach((item,index)=>{
-                           values.images.push({imgUrl:item.response.url});
-                        });
+                        let images=[];
+                        for(let i=1;i<fileList.length;i++){
+                            images.push({goodsId:goods.goodsId,imgUrl:fileList[i].response.url});
+                        }
+                        try {
+                            await Request.addPicture(images);
+                            message.success("图片添加成功!");
+                        }catch (e) {
+                            message.error("商品图片添加失败");
+                        }
                     }
-                    console.log("valuse",values);
                 }catch (e) {
-                    message.error("修改密码失败,参数错误");
+                    message.error("商品发布失败");
                 }
             }
         });
@@ -71,6 +78,7 @@ class PublishGoods extends React.Component{
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const user=this.props.user;
         const {TextArea}=Input;
         const { previewVisible, previewImage, fileList } = this.state;
         const uploadButton = (
@@ -95,6 +103,14 @@ class PublishGoods extends React.Component{
                         <img alt="example" style={{width: '100%'}} src={previewImage}/>
                     </Modal>
                 </Form.Item>
+                <Form.Item wrapperCol={{span:0}}>
+                    {getFieldDecorator('userId', {
+                        rules: [{ required: true, message: '请输入ID!' }],
+                        initialValue:user.userId
+                    })(
+                        <Input type="hidden" />,
+                    )}
+                </Form.Item>
                 <Form.Item label="商品名称">
                     {getFieldDecorator('goodsName', {
                         rules: [{ required: true, message: '商品名称!' }],
@@ -115,7 +131,7 @@ class PublishGoods extends React.Component{
                     )}
                 </Form.Item>
                 <Form.Item label="原价">
-                    {getFieldDecorator('realPrice')(
+                    {getFieldDecorator('goodsRealPrice')(
                         <InputNumber
                             min={0}
                             formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
