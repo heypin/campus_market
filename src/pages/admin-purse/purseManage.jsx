@@ -128,9 +128,7 @@ class PurseManage extends  React.Component{
         this.pageNum=pageNum;
         this.cancel();
     };
-    onSearch=(value)=>{
 
-    };
 
     isEditing = record => {
         return record.purseId === this.state.editingKey;
@@ -147,15 +145,22 @@ class PurseManage extends  React.Component{
                 const item = newData[index];
                 newData.splice(index, 1, {...item, ...row,});
                 try{
-                    await Request.updatePurseById({purseId:item.purseId,...row});
+                    await Request.updatePurseById({...item,...row});
                     message.success("更新成功!");
                     this.setState((state)=>{
                         state.purse.records=newData;
                         return {purse: state.purse, editingKey: ''}
                     });
                 }catch (e) {
-                    message.error("更新失败!");
+
                     this.setState({ editingKey: '' });
+                    if(e.response.status===400){
+                        for(let i in e.response.data){
+                            message.error(e.response.data[i]);
+                        }
+                    }else {
+                        message.error("更新失败!");
+                    }
                 }
 
             } else {

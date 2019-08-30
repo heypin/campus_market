@@ -55,6 +55,8 @@ export default {
         ajax(`/orders/deliver`,{orderId:orderId},'PUT'),
     confirmReceipt:(orderId)=>
         ajax(`/orders/receipt`,{orderId:orderId},'PUT'),
+    addOrder:(order)=>
+        ajax(`/orders`,order,'POST'),
     getPurseByUserId:(userId)=>
         ajax(`/purse`,{userId:userId}),
     getReplyToMeComment:(userId)=>

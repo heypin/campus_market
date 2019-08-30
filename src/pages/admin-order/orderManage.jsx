@@ -77,15 +77,22 @@ class OrderManage extends  React.Component{
                 const item = newData[index];
                 newData.splice(index, 1, {...item, ...row,});
                 try{
-                    await Request.updateOrderById({orderId:item.orderId,...row});
+                    await Request.updateOrderById({...item,...row});
                     message.success("更新成功!");
                     this.setState((state)=>{
                         state.orders.records=newData;
                         return {orders: state.orders, editingKey: ''}
                     });
                 }catch (e) {
-                    message.error("更新失败!");
+
                     this.setState({ editingKey: '' });
+                    if(e.response.status===400){
+                        for(let i in e.response.data){
+                            message.error(e.response.data[i]);
+                        }
+                    }else {
+                        message.error("更新失败!");
+                    }
                 }
 
             } else {

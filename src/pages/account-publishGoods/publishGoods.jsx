@@ -1,6 +1,6 @@
 import React from 'react'
 import './publishGoods.less'
-import {Button, Form, Input, InputNumber, message, Icon, Upload,Modal} from 'antd'
+import {Button, Form, Input, InputNumber, message, Icon, Upload,Modal,Select} from 'antd'
 import Request from "../../api";
 import Constant from "../../utils/constant";
 
@@ -12,6 +12,7 @@ class PublishGoods extends React.Component{
             previewImage: '',
             fileList: [],
             isModifyState:false,
+            category:[],
         };
     }
     setInitValueWhenUpdate=()=> {
@@ -21,7 +22,8 @@ class PublishGoods extends React.Component{
                 goodsName:goods.goodsName,
                 goodsPrice:goods.goodsPrice,
                 goodsRealPrice:goods.goodsRealPrice,
-                goodsDescribe:goods.goodsDescribe
+                goodsDescribe:goods.goodsDescribe,
+                categoryId:goods.categoryId
             });
             this.setState({
                 isModifyState:true,
@@ -54,9 +56,14 @@ class PublishGoods extends React.Component{
         }
 
     };
+    loadAllCategory=async ()=>{
+        const result=await Request.getAllCategory();
+        this.setState({category:result});
+    };
     componentDidMount() {
-        this.setInitValueWhenUpdate();
         this.loadGoodsImages();
+        this.loadAllCategory();
+        this.setInitValueWhenUpdate();
     }
 
     handleModifyGoods=async ()=>{
@@ -83,7 +90,13 @@ class PublishGoods extends React.Component{
                         }
                     }
                 } catch (e) {
-                    message.error("商品修改失败");
+                    if(e.response.status===400){
+                        for(let i in e.response.data){
+                            message.error(e.response.data[i]);
+                        }
+                    }else {
+                        message.error("商品修改失败");
+                    }
                 }
             }
         });
@@ -91,7 +104,7 @@ class PublishGoods extends React.Component{
     handleChange = (e) =>{
         const {fileList}=e;
         this.setState({ fileList });
-        console.log(fileList);
+
     };
     handleSubmit=(e)=>{
         e.preventDefault();
@@ -117,7 +130,13 @@ class PublishGoods extends React.Component{
                         }
                     }
                 }catch (e) {
-                    message.error("商品发布失败");
+                    if(e.response.status===400){
+                        for(let i in e.response.data){
+                            message.error(e.response.data[i]);
+                        }
+                    }else {
+                        message.error("商品发布失败");
+                    }
                 }
             }
         });
@@ -154,7 +173,7 @@ class PublishGoods extends React.Component{
             </div>
         );
         return (
-            <Form labelCol={{span:3,offset:0}}  wrapperCol={{span:8}}  onSubmit={this.handleSubmit} className="login-form">
+            <Form labelCol={{span:3,offset:0}}  wrapperCol={{span:8}}  onSubmit={this.handleSubmit} >
                 <Form.Item label="商品图片" wrapperCol={{span: 20}}>
                     <Upload
                         action={Constant.UploadImage}
@@ -176,10 +195,24 @@ class PublishGoods extends React.Component{
                     })(
                         <Input type="hidden" />,
                     )}
+
+                </Form.Item>
+                <Form.Item label="分类" hasFeedback>
+                    {getFieldDecorator('categoryId', {
+                        rules: [{ required: true, message: '请选择分类' }],
+                    })(
+                        <Select placeholder="选择分类">
+                            {
+                                this.state.category.map((item,index)=>{
+                                  return   <Select.Option value={item.categoryId} key={index}>{item.categoryName}</Select.Option>
+                                })
+                            }
+                        </Select>,
+                    )}
                 </Form.Item>
                 <Form.Item label="商品名称">
                     {getFieldDecorator('goodsName', {
-                        rules: [{ required: true, message: '商品名称!' }],
+                        rules: [{ required: true, message: '请输入商品名称' }],
                     })(
                         <Input />,
                     )}
@@ -187,7 +220,7 @@ class PublishGoods extends React.Component{
                 </Form.Item>
                 <Form.Item label="商品价格">
                     {getFieldDecorator('goodsPrice', {
-                        rules: [{ required: true, message: '请输入商品价格!' }],
+                        rules: [{ required: true, message: '请输入商品价格' }],
                     })(
                         <InputNumber
                             min={0}
@@ -207,7 +240,7 @@ class PublishGoods extends React.Component{
                 </Form.Item>
                 <Form.Item label="描述" wrapperCol={{span:16}}>
                     {getFieldDecorator('goodsDescribe', {
-                        rules: [{ required: true, message: '请输入密码!' }],
+                        rules: [{ required: true, message: '请输入商品描述' }],
                     })(
                         <TextArea rows={4} />,
                     )}

@@ -20,11 +20,17 @@ class NormalLoginForm extends React.Component {
             window.localStorage.setItem("user_token",result.token);
             this.setState({visible: false, confirmLoading: false,});
             message.success("登录成功!");
-
             this.props.changeLoginState({user:result.user});//这句一定要放在this.setState之后
         }catch (e) {
             this.setState({confirmLoading: false,});
-            message.error("用户名或密码错误！");
+            if(e.response.status===400){
+                for(let i in e.response.data){
+                    message.error(e.response.data[i]);
+                }
+            }else {
+                message.error("用户名或密码错误！");
+            }
+
         }
     };
     handleAdminLogin=async ()=>{

@@ -2,6 +2,7 @@ import React from 'react'
 import {Button, Card, Form, Input, message, Pagination, Popconfirm, Table} from "antd";
 import {Resizable} from "react-resizable";
 import Request from '../../api'
+import Constant from "../../utils/constant";
 const {Search}=Input;
 const EditableContext = React.createContext();
 const ResizeableTitle = props => {
@@ -38,7 +39,11 @@ class UserManage extends  React.Component{
         {width:100,editable:true,title: '用户名', dataIndex: 'username', key: '1',},
         {width:150,editable:true,title: '密码', dataIndex: 'password', key: '2',},
         {width:150,editable:true,title: '手机号', dataIndex: 'telephone', key: '3',},
-        {width:150,editable:true,title: '头像', dataIndex: 'userAvatarUrl', key: '4',},
+        {width:150,editable:true,title: '头像', dataIndex: 'userAvatarUrl', key: '4',
+            render:(text)=>{
+                return <img src={Constant.BaseAvatar+text} style={{width:50,height:50}}/>
+            }
+        },
         {width:150,editable:true,title: '地址', dataIndex: 'userAddress', key: '5',},
         {width:150,editable:true,title: 'QQ号', dataIndex: 'qqNumber', key: '6',},
         {width:150,editable:true,title: '状态', dataIndex: 'userState', key: '7',
@@ -83,9 +88,6 @@ class UserManage extends  React.Component{
     };
 
 
-    onSearch=(value)=>{
-
-    };
     loadUserDataByPage=async (pageNum)=>{
         const result= await Request.getUserListByPage(pageNum,20);
         this.setState({user:result});
@@ -121,8 +123,14 @@ class UserManage extends  React.Component{
                         return {user: state.user, editingKey: ''}
                     });
                 }catch (e) {
-                    message.error("更新失败!");
                     this.setState({ editingKey: '' });
+                    if(e.response.status===400){
+                        for(let i in e.response.data){
+                            message.error(e.response.data[i]);
+                        }
+                    }else {
+                        message.error("更新失败!");
+                    }
                 }
 
             } else {

@@ -22,7 +22,13 @@ class RegistrationForm extends React.Component {
             message.success("注册成功!");
         }catch (e) {
             this.setState({confirmLoading: false,});
-            message.error("手机号已被注册！");
+            if(e.response.status===400){
+                for(let i in e.response.data){
+                    message.error(e.response.data[i]);
+                }
+            }else {
+                message.error("手机号已被注册！");
+            }
         }
     };
     handleSubmit = e => {

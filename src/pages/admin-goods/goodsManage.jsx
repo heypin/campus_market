@@ -3,6 +3,7 @@ import {Button, Card, Form, Input, message, Pagination, Popconfirm, Table} from 
 import moment from "moment"
 import {Resizable} from "react-resizable";
 import Request from '../../api'
+import Constant from "../../utils/constant";
 
 const EditableContext = React.createContext();
 const ResizeableTitle = props => {
@@ -53,8 +54,13 @@ class GoodsManage extends  React.Component{
 
     };
     goodsColumns=[
-        {width:100,editable:false,title: '用户ID', dataIndex: 'userId', key: '2',},
-        {width:150,editable:true,title: '名称', dataIndex: 'goodsName', key: '3',},
+        {width:100,editable:false,title: '用户ID', dataIndex: 'userId', key: '1',},
+        {width:150,editable:true,title: '名称', dataIndex: 'goodsName', key: '2',},
+        {width:150,editable:true,title: '图片', dataIndex: 'goodsImg', key: '3',
+            render:(text)=>{
+                return <img src={Constant.BaseImgUrl+text} style={{width:80,height:80}}/>
+            }
+        },
         {width:150,editable:true,title: '价格', dataIndex: 'goodsPrice', key: '4',},
         {width:150,editable:true,title: '原价', dataIndex: 'goodsRealPrice', key: '5',},
         {width:150,editable:true,title: '上架时间', dataIndex: 'shelfTime', key: '6',
@@ -136,15 +142,22 @@ class GoodsManage extends  React.Component{
                 const item = newData[index];
                 newData.splice(index, 1, {...item, ...row,});
                 try{
-                    await Request.updateGoodsById({goodsId:item.goodsId,...row});
+                    await Request.updateGoodsById({...item,...row});
                     message.success("更新成功!");
                     this.setState((state)=>{
                         state.goods.records=newData;
                         return {goods: state.goods, editingKey: ''}
                     });
                 }catch (e) {
-                    message.error("更新失败!");
+
                     this.setState({ editingKey: '' });
+                    if(e.response.status===400){
+                        for(let i in e.response.data){
+                            message.error(e.response.data[i]);
+                        }
+                    }else {
+                        message.error("更新失败!");
+                    }
                 }
 
             } else {

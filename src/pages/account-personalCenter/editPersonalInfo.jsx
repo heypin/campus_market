@@ -50,13 +50,18 @@ class EditPersonalInfo extends React.Component{
                     await Request.editUserInfo(values);
                     message.success("修改成功");
                 }catch (e) {
-                    message.error("修改失败,参数错误");
+                    if(e.response.status===400){
+                        for(let i in e.response.data){
+                            message.error(e.response.data[i]);
+                        }
+                    }else {
+                        message.error("手机号已被注册");
+                    }
                 }
             }
         });
     };
     render() {
-        console.log("edit render");
         const user=this.props.user;
         const { imageUrl } = this.state;
         const { getFieldDecorator } = this.props.form;
@@ -67,7 +72,7 @@ class EditPersonalInfo extends React.Component{
             </div>
         );
         return (
-            <Form    onSubmit={this.handleEditPersonalInfo} >
+            <Form   onSubmit={this.handleEditPersonalInfo} >
                 <Row gutter={24}>
                     <Col span={24}>
                         <Form.Item label="头像" >
