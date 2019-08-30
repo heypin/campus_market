@@ -22,7 +22,7 @@ class EditableCell extends React.Component {
             {editing ? (
                 <Form.Item style={{ margin: 0 }}>
                     {getFieldDecorator(dataIndex, {rules: [{required: true, message: `请输入${title}!`,}],
-                        initialValue: record[dataIndex],})(<Input  />)}
+                        initialValue: record[dataIndex],})(<Input.TextArea rows={2}  />)}
                 </Form.Item>
             ) : (children)}
         </td>);
@@ -36,9 +36,9 @@ class EditableCell extends React.Component {
 
 
 class GoodsManage extends  React.Component{
-    handleGoodsState=async (goodsId,updateState)=>{
+    handleGoodsState=async (record,updateState)=>{
         try{
-            let goods={goodsId:goodsId,goodsState: updateState};
+            let goods={...record,goodsState: updateState};
             if(updateState===1){
                 goods.shelfTime=moment().format('YYYY-MM-DDTHH:mm:ss');
             }
@@ -58,20 +58,20 @@ class GoodsManage extends  React.Component{
         {width:150,editable:true,title: '名称', dataIndex: 'goodsName', key: '2',},
         {width:150,editable:true,title: '图片', dataIndex: 'goodsImg', key: '3',
             render:(text)=>{
-                return <img src={Constant.BaseImgUrl+text} style={{width:80,height:80}}/>
+                return <img src={Constant.BaseImgUrl+text} style={{width:80,height:80}} alt="商品图片"/>
             }
         },
-        {width:150,editable:true,title: '价格', dataIndex: 'goodsPrice', key: '4',},
-        {width:150,editable:true,title: '原价', dataIndex: 'goodsRealPrice', key: '5',},
+        {width:100,editable:true,title: '价格', dataIndex: 'goodsPrice', key: '4',},
+        {width:100,editable:true,title: '原价', dataIndex: 'goodsRealPrice', key: '5',},
         {width:150,editable:true,title: '上架时间', dataIndex: 'shelfTime', key: '6',
             render:(text)=>moment(text).format('YYYY-MM-DD HH:mm:ss')},
         {width:150,editable:true,title: '下架时间', dataIndex: 'offShelfTime', key: '7',
             render:(text)=>moment(text).format('YYYY-MM-DD HH:mm:ss')},
-        {width:150,editable:true,title: '描述', dataIndex: 'goodsDescribe', key: '8',},
-        {width:150,editable:true,title: '状态', dataIndex: 'goodsState', key: '9',
+        {width:250,editable:true,title: '描述', dataIndex: 'goodsDescribe', key: '8',},
+        {width:100,editable:true,title: '状态', dataIndex: 'goodsState', key: '9',
             render: (text,record) => {
-                if(text===0) return (<Button type="primary" onClick={()=>this.handleGoodsState(record.goodsId,1)}>上架</Button>);
-                else if(text===1) return <Button onClick={()=>this.handleGoodsState(record.goodsId,0)}>下架</Button>;
+                if(text===0) return (<Button type="primary" onClick={()=>this.handleGoodsState(record,1)}>上架</Button>);
+                else if(text===1) return <Button onClick={()=>this.handleGoodsState(record,0)}>下架</Button>;
             },
             filters: [{text: '已下架', value: 0,}, {text: '已上架', value: 1,}],
             onFilter: (value, record) => record.goodsState=== value,
@@ -205,10 +205,13 @@ class GoodsManage extends  React.Component{
                            bordered={true}
                            rowKey={record=>record.goodsId}
                            dataSource={this.state.goods.records}
-                           pagination={
-                               <Pagination showQuickJumper defaultCurrent={1} pageSize={20} total={this.state.goods.total}
-                                           onChange={this.onPageChange} style={{marginBottom:20,marginTop:20}}/>
-                           }
+                           pagination={{
+                                showQuickJumper:true,
+                                defaultCurrent:1,
+                                pageSize:20,
+                                total:this.state.goods.total,
+                                onChange:this.onPageChange,
+                           }}
                            components={this.components}
                     />
                 </EditableContext.Provider>

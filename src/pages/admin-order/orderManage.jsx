@@ -175,10 +175,13 @@ class OrderManage extends  React.Component{
                            bordered={true}
                            rowKey={record=>record.orderId}
                            dataSource={this.state.orders.records}
-                           pagination={
-                               <Pagination showQuickJumper defaultCurrent={1} pageSize={20} total={this.state.orders.total}
-                                     onChange={this.onPageChange} style={{marginBottom:20,marginTop:20}}/>
-                           }
+                           pagination={{
+                               showQuickJumper:true,
+                               defaultCurrent:1,
+                               pageSize:20,
+                               total:this.state.orders.total,
+                               onChange:this.onPageChange,
+                           }}
                            components={this.components}
                     />
                 </EditableContext.Provider>

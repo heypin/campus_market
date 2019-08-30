@@ -222,19 +222,17 @@ class PublishGoods extends React.Component{
                     {getFieldDecorator('goodsPrice', {
                         rules: [{ required: true, message: '请输入商品价格' }],
                     })(
-                        <InputNumber
-                            min={0}
+                        <InputNumber min={0}
                             formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={value => value.replace(/\￥\s?|(,*)/g, '')}
+                            parser={value => value.replace(/￥\s?|(,*)/g, '')}
                         />
                     )}
                 </Form.Item>
                 <Form.Item label="原价">
                     {getFieldDecorator('goodsRealPrice')(
-                        <InputNumber
-                            min={0}
-                            formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={value => value.replace(/\￥\s?|(,*)/g, '')}
+                        <InputNumber min={0}
+                                     formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                     parser={value => value.replace(/￥\s?|(,*)/g, '')}
                         />
                     )}
                 </Form.Item>

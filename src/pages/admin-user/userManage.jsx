@@ -20,7 +20,7 @@ class EditableCell extends React.Component {
         return (<td {...restProps}>
             {editing ? (
                 <Form.Item style={{ margin: 0 }}>
-                    {getFieldDecorator(dataIndex, {rules: [{required: true, message: `请输入${title}!`,}],
+                    {getFieldDecorator(dataIndex, {rules: [],
                         initialValue: record[dataIndex],})(<Input  />)}
                 </Form.Item>
             ) : (children)}
@@ -41,7 +41,7 @@ class UserManage extends  React.Component{
         {width:150,editable:true,title: '手机号', dataIndex: 'telephone', key: '3',},
         {width:150,editable:true,title: '头像', dataIndex: 'userAvatarUrl', key: '4',
             render:(text)=>{
-                return <img src={Constant.BaseAvatar+text} style={{width:50,height:50}}/>
+                return <img src={Constant.BaseAvatar+text} style={{width:50,height:50}} alt="头像"/>
             }
         },
         {width:150,editable:true,title: '地址', dataIndex: 'userAddress', key: '5',},
@@ -172,10 +172,13 @@ class UserManage extends  React.Component{
                            bordered={true}
                            rowKey={record=>record.userId}
                            dataSource={this.state.user.records}
-                           pagination={
-                               <Pagination showQuickJumper defaultCurrent={1} pageSize={20} total={this.state.user.total}
-                                           onChange={this.onPageChange} style={{marginBottom:20,marginTop:20}}/>
-                           }
+                           pagination={{
+                               showQuickJumper:true,
+                               defaultCurrent:1,
+                               pageSize:20,
+                               total:this.state.user.total,
+                               onChange:this.onPageChange,
+                           }}
                            components={this.components}
                     />
                 </EditableContext.Provider>

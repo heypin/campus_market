@@ -140,9 +140,9 @@ class PersonalCenter extends React.Component{
                             defaultValue={0}
                             min={0}
                             formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={value => value.replace(/\￥\s?|(,*)/g, '')}
+                            parser={value => value.replace(/￥\s?|(,*)/g, '')}
+                            style={{width:150,marginLeft:60,marginRight:50}}
                             onChange={this.onChange}
-                            style={{width:120,marginLeft:100,marginRight:50}}
                         />
                         <Button style={{marginRight:20}} onClick={this.handleRecharge}>充值</Button>
                         <Button style={{marginRight:20}} onClick={this.handleWithdraw}>提现</Button>

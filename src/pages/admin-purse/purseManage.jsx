@@ -19,7 +19,7 @@ class EditableCell extends React.Component {
         return (<td {...restProps}>
             {editing ? (
                 <Form.Item style={{ margin: 0 }}>
-                    {getFieldDecorator(dataIndex, {rules: [],
+                    {getFieldDecorator(dataIndex, {rules: [{required: true, message: `请输入${title}!`,}],
                         initialValue: record[dataIndex],})(<Input />)}
                 </Form.Item>
             ) : (children)}
@@ -40,8 +40,8 @@ class PurseManage extends  React.Component{
               let balance=parseFloat(record.balance);
               let recharge=parseFloat(record.recharge);
               let withdraw=parseFloat(record.withdraw);
-              await Request.updatePurseById({purseId:record.purseId, purseState:2,
-                  recharge:0,withdraw:0, balance:balance+recharge-withdraw});
+              await Request.updatePurseById({...record,recharge:0,withdraw:0,
+                  purseState:2, balance:balance+recharge-withdraw});
               this.loadPurseDataByPage(this.pageNum);
               message.success("操作成功!");
 
@@ -51,7 +51,7 @@ class PurseManage extends  React.Component{
       }
       if(state===3){
           try{
-              await Request.updatePurseById({purseId:record.purseId,purseState:3});
+              await Request.updatePurseById({...record,purseState:3});
               this.loadPurseDataByPage(this.pageNum);
               message.success("操作成功!");
 
@@ -208,10 +208,13 @@ class PurseManage extends  React.Component{
                            bordered={true}
                            rowKey={record=>record.purseId}
                            dataSource={this.state.purse.records}
-                           pagination={
-                               <Pagination showQuickJumper defaultCurrent={1} pageSize={20} total={this.state.purse.total}
-                                           onChange={this.onPageChange} style={{marginBottom:20,marginTop:20}}/>
-                           }
+                           pagination={{
+                               showQuickJumper:true,
+                               defaultCurrent:1,
+                               pageSize:20,
+                               total:this.state.purse.total,
+                               onChange:this.onPageChange,
+                           }}
                            components={this.components}
                     />
                 </EditableContext.Provider>
