@@ -60,7 +60,7 @@ export  default  class Home extends React.Component{
         return (
             <div className='home'>
                 <Layout className='container'>
-                    <Header className='header' style={{ position: 'fixed', zIndex: 1, width: 1000 }}>
+                    <Header className='header' style={{ position: 'fixed', zIndex: 1 }}>
                         <div className="nav">
                             <div className="logo">
                                 <img src={logo} alt="logo"/>
